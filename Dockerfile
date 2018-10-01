@@ -3,7 +3,7 @@ LABEL maintainer="Dwolla Dev <dev+sbt@dwolla.com>"
 LABEL org.label-schema.vcs-url="https://github.com/Dwolla/docker-sbt-version-cache"
 
 USER root
-ENV SBT_VERSION=1.2.1 \
+ENV SBT_VERSION=1.2.3 \
     SBT_HOME=/usr/local/sbt
 ENV PATH=${SBT_HOME}/bin:${PATH}
 
@@ -14,7 +14,7 @@ RUN curl -sL /tmp/sbt-${SBT_VERSION}.tgz "https://github.com/sbt/sbt/releases/do
     gunzip | tar -x -C /usr/local
 
 RUN cd /fake-project && \
-    for version in 1.2.1; do \
+    for version in ${SBT_VERSION}; do \
         echo sbt.version=${version} > project/build.properties && \
         sbt -Dsbt.log.noformat=true clean +compile; \
     done
