@@ -2,11 +2,11 @@ lazy val buildSettings = Seq(
   name := "fake-project",
   organization := "com.dwolla",
   version := "0.0.1",
-  scalaVersion := "2.12.8",
+  scalaVersion := "2.12.10",
   crossScalaVersions := Seq(
     "2.11.12",
-    "2.12.8",
-    "2.13.0-M5"
+    "2.12.10",
+    "2.13.1"
   )
 )
 
