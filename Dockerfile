@@ -3,7 +3,7 @@ LABEL maintainer="Dwolla Dev <dev+sbt@dwolla.com>"
 LABEL org.label-schema.vcs-url="https://github.com/Dwolla/docker-sbt-version-cache"
 
 USER root
-ENV SBT_VERSION=1.3.5 \
+ENV SBT_VERSION=1.3.7 \
     SBT_HOME=/usr/local/sbt
 ENV PATH=${SBT_HOME}/bin:${PATH}
 
