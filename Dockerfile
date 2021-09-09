@@ -1,9 +1,9 @@
-FROM openjdk:8-jdk-alpine AS downloader
+FROM adoptopenjdk/openjdk8:jdk8u302-b08-alpine-slim AS downloader
 LABEL maintainer="Dwolla Dev <dev+sbt@dwolla.com>"
 LABEL org.label-schema.vcs-url="https://github.com/Dwolla/docker-sbt-version-cache"
 
 USER root
-ENV SBT_VERSION=1.3.7 \
+ENV SBT_VERSION=1.5.5 \
     SBT_HOME=/usr/local/sbt
 ENV PATH=${SBT_HOME}/bin:${PATH}
 
@@ -24,4 +24,3 @@ COPY --from=downloader /usr/local/sbt /usr/local/sbt
 COPY --from=downloader /root/.cache/coursier /root/.cache/coursier
 COPY --from=downloader /root/.ivy2 /root/.ivy2
 COPY --from=downloader /root/.sbt /root/.sbt
-COPY --from=downloader /usr/lib/jvm /usr/lib/jvm
