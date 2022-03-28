@@ -1,20 +1,37 @@
-FROM adoptopenjdk/openjdk8:jdk8u302-b08-alpine-slim AS downloader
+FROM eclipse-temurin:11 AS downloader
 LABEL maintainer="Dwolla Dev <dev+sbt@dwolla.com>"
 LABEL org.label-schema.vcs-url="https://github.com/Dwolla/docker-sbt-version-cache"
 
 USER root
-ENV SBT_VERSION=1.5.5 \
+ENV SBT_VERSION=1.6.2 \
     SBT_HOME=/usr/local/sbt
 ENV PATH=${SBT_HOME}/bin:${PATH}
 
 COPY fake-project /fake-project
 
-RUN apk add --update --no-cache curl ca-certificates bash
-RUN curl -sL /tmp/sbt-${SBT_VERSION}.tgz "https://github.com/sbt/sbt/releases/download/v${SBT_VERSION}/sbt-${SBT_VERSION}.tgz" | \
-    gunzip | tar -x -C /usr/local
+RUN apt-get update &&\
+    apt-get install -y \
+      curl \
+      ca-certificates \
+      bash
+
+SHELL ["/bin/bash", "-o", "errexit", "-o", "nounset", "-o", "pipefail", "-c"]
+
+RUN cd /tmp && \
+    curl --silent --verbose --location --output "sbt-${SBT_VERSION}.sha256" "https://github.com/sbt/sbt/releases/download/v${SBT_VERSION}/sbt-${SBT_VERSION}.tgz.sha256" && \
+    curl --silent --verbose --location --output "sbt-${SBT_VERSION}.tgz" "https://github.com/sbt/sbt/releases/download/v${SBT_VERSION}/sbt-${SBT_VERSION}.tgz" && \
+    sha256sum -c "sbt-${SBT_VERSION}.sha256" && \
+    gunzip --stdout "sbt-${SBT_VERSION}.tgz" | \
+    tar --extract --directory="$(dirname "${SBT_HOME}")" \
+      sbt/bin/sbt \
+      sbt/bin/sbt-launch.jar \
+      sbt/conf/sbtopts \
+      sbt/LICENSE \
+      sbt/NOTICE && \
+    chmod 0444 "${SBT_HOME}/bin/sbt-launch.jar"
 
 RUN cd /fake-project && \
-    for version in ${SBT_VERSION}; do \
+    for version in ${SBT_VERSION} 1.5.5; do \
         echo sbt.version=${version} > project/build.properties && \
         sbt -Dsbt.log.noformat=true clean +compile; \
     done
